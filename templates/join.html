@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!-- This file has been downloaded from Bootsnipp.com. Enjoy! -->
+    <title>NSTalk</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+    <style type="text/css">
+        /**
+ * parallax.css
+ * @Author Original @msurguy -> http://bootsnipp.com/snippets/featured/parallax-login-form
+ * @Reworked By @kaptenn_com 
+ * @package PARALLAX LOGIN.
+ */
+    
+		@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+		body{
+     		background: url(http://nstalk.xyz/static/img/back2.png) repeat;
+				font-family:'Nanum Gothic', serif;
+        background-color: #444;
+    }
+    .form-signin input[type="text"] {
+        margin-bottom: 5px;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    .form-signin input[type="password"] {
+        margin-bottom: 10px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+    .form-signin .form-control {
+        position: relative;
+        font-size: 16px;
+        font-family: 'Nanum Gothic', sans-serif;
+        height: auto;
+        padding: 10px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    .vertical-offset-100 {
+        padding-top: 100px;
+    }
+    .img-responsive {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: auto;
+    }
+    .panel {
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.75);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    }
+
+    </style>
+
+    <!--<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>-->
+    <script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+</head>
+<body>
+
+    <div class="container col-md-8 col-md-offset-2">
+
+      <h2 id="myModalLabel"><strong>회원가입</strong></h2>
+			{% for message in get_flashed_messages() %}
+			<div class="alert alert-success">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				{{message|safe}}
+			</div>
+			{% endfor %}
+			<form action="{{url_for('join')}}" class="form-horizontal" method="POST"  enctype="multipart/form-data">
+				<input type="text" class="form-control" placeholder="아이디(년도 + 학번) 입력 -> 예)201510317" name="userid" value="{{userid}}">
+				<br>
+				<input type="text" class="form-control" placeholder="이름(닉네임) 입력" name="name" value="{{name}}">
+				<br>
+				<input type="password" class="form-control" placeholder="비번 입력" name="password" value="{{password}}">
+				<br>
+				<input type="password" class="form-control" placeholder="비번 확인!" name= "confirm" value="{{confirm}}">
+				<br>
+				<input type="file" accept="image/*" class="form-control" name= "file">
+				<p class="help-block"> 프로필 사진을 등록해주세요 </p>
+
+				<div class="form-group">
+					 <div class="col-sm-12">
+						 <button type="submit" class="btn btn-block btn-success col-sm-12">가입하기 ^__^</button>
+					 </div>
+				 </div>
+		 </form>
+     <a href="{{url_for('login')}}" class="btn btn-primary btn-block" data-dismiss="modal">가입을 취소 합니다!</a>
+	</div>
+</body>
+</html>

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %} 
+<style>
+	#image-holder img{
+		width:19%;
+		margin: 1% 0.5%;
+		border: 1px dashed #ABF200;
+	}
+</style>
+<script>
+$(function(){
+	$("#fileUpload").on('change', function () {
+	 
+			 //Get count of selected files
+			 var countFiles = $(this)[0].files.length;
+	 
+			 var imgPath = $(this)[0].value;
+			 var extn = imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase();
+			 var image_holder = $("#image-holder");
+			 image_holder.empty();
+	 
+			 if (extn == "gif" || extn == "png" || extn == "jpg" || extn == "jpeg") {
+					 if (typeof (FileReader) != "undefined") {
+	 
+							 //loop for each file selected for uploaded.
+							 for (var i = 0; i < countFiles; i++) {
+	 
+									 var reader = new FileReader();
+									 reader.onload = function (e) {
+											 $("<img />", {
+													 "src": e.target.result,
+															 "class": "thumb-image"
+											 }).appendTo(image_holder);
+									 }
+	 
+									 image_holder.show();
+									 reader.readAsDataURL($(this)[0].files[i]);
+							 }
+	 
+					 } else {
+							 alert("This browser does not support FileReader.");
+					 }
+			 } else {
+					 alert("Pls select only images");
+			 }
+	 });
+
+
+	$('.favtag').click(function(){
+		$('#newtag').val($(this).text().trim().split('(')[0]);
+		$('.favtag').css('background','none');		
+		$(this).css('background', '#FFF612');
+	}) 
+
+	$('#newtag').change(function(){
+		$('.favtag').css('background','none');		
+	})
+});
+</script>
+
+<form action="{{url_for('create_article')}}" method="POST" enctype="multipart/form-data">
+	<div class="form-group has-warning">
+		<label class="text-warning">제목</label>
+		<input value="{{title}}"name="title" type="text" class="form-control" placeholder="제목을 입력하세요">
+	</div>
+
+	<div class="form-group has-success">
+		<label class="text-success">태그</label>
+		<input id="newtag" value="{{tag_typed}}"name="tag" type="text" class="form-control" placeholder="새로운 태그 입력 or 기존 태그 선택">
+	</div>
+
+	<div class="jumbotron" style="padding: 3% 3%;margin-bottom: 2%">
+		<strong>기존 태그 :  </strong>
+		{% for tag in tags %}
+			<a href="#" style="white-space:nowrap">
+				<span class="favtag text-{{textcolor[loop.index0%6]}}" >
+					{{tag.id}}({{tag.article_count}}){% if loop.index0 + 1 < tags|length  %},{% endif %}
+				</span>
+			</a>
+		{% endfor %}
+	</div>
+
+	<div class="form-group has-error">
+		<label class="text-danger">내용</label>
+		<textarea name="content" class="form-control" rows="5">{{content}}</textarea>
+	</div>
+
+	<p class="help-block"> 사진을 등록해주세요<br>(여러개 등록 가능, ctrl 누르고 추가 선택) </p>
+	<input accept="image/*" type='file' class="form-control"  name='file[]' id="fileUpload" multiple>
+  <br />
+  <div id="image-holder" style="margin-bottom:3%"></div>
+
+	<button type="submit" class="btn btn-success btn-block">글쓰기</button>
+</form>
+<br>
+<br>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+	<style>
+		.favtag{
+			font-size:1.2em;
+		}
+		.jumbotron {
+			padding:2%; margin-bottom:2%;
+		}
+		a{white-space : nowrap;}
+
+	</style>
+	<div class="jumbotron">
+		<strong style="font-size:1.2em">모든 태그 목록(포함한 글 갯수)</strong>
+		<br>
+		{% for tag in tags %}
+			<a href="{{url_for('timeline', sort_type=tag.id)}}" class="favtag text-{{textcolor[loop.index0%6]}}" >
+				{{tag.id}}({{tag.article_count}}){% if loop.index0 + 1 < tags|length  %},{% endif %}
+			</a>
+		{% endfor %}
+	</div>
+
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block content %}
+    
+<script>
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover();   
+});
+</script>  
+<style>
+	.imglist{
+		width: 19%;
+	}
+
+	.media{
+		background:rgba(224,224,224,0.25); 
+	}
+</style>
+
+
+      <div class="jumbotron" style="padding:3% 4%;margin-bottom:2%">
+				<strong class="text-info" style="display:inline; font-size:2em">
+					{{article.title}}
+				</strong>
+				<button id="delete_article" style="margin:2%" class="close" >&times;</button>
+				<br>
+				<strong style="font-size:1.5em">글쓴이:  {{article.user.name}} </strong>&nbsp;
+				<button style="padding:1%" type="button" data-toggle="popover" data-container="body" data-placement="bottom" class="btn btn-default" data-content="좋아요 누른 사람: {{article.like_history_user}}">
+					<span class="glyphicon glyphicon-thumbs-up text-primary"></span> x {{article.like_count}} 
+				</button>
+				<a href="{{url_for('update_article', article_id=article.id)}}">
+					<button style="padding:1%" type="button" class="btn btn-default">
+						<span class="text-danger">수정하기</span>
+					</button>
+				</a>
+				<hr style="margin-top:3%">
+        <p style="font-size:1em;">
+					{{article.content}}
+        </p>
+					
+				<hr>
+				<section>
+					{% for file in files %}
+					{% if file|length >1 %}	
+					<a href="http://nstalk.xyz/download/{{file}}" data-lightbox="article-img">
+						<img class="imglist" src="http://nstalk.xyz/download/{{file}}">
+					</a>
+					{% endif %}
+					{% endfor %}
+				</section>
+        <hr>
+        <div class="row">
+          <div class="col-xs-4 col-xs-offset-1">
+						<center style="font-size:1.2em;" class="text-primary">
+							{% if g.user.id in article.like_history %}
+							<a href="{{url_for('like', article_id=article.id)}}"><span class="glyphicon glyphicon-thumbs-up"></span> 좋아요 취소</a>
+							{% else %}
+							<a href="{{url_for('like', article_id=article.id)}}"><span class="glyphicon glyphicon-thumbs-up"></span> 좋아요</a>
+							{% endif %}
+						</center>
+          </div>
+          <div class="col-xs-5 col-xs-offset-1">
+          	<center style="font-size:1.2em;" class="text-danger">
+							<a href="#"><span class="glyphicon glyphicon-heart-empty"></span> 더 좋아요</a>
+						</center>
+         </div>
+        </div>
+        
+      </div>
+
+    <form action="{{url_for('comment', article_id=article.id)}}" method="POST">
+      <div class="input-group form-group">
+        <input type="text" name="content" class="form-control" placeholder="댓글을 입력해주세요">
+        <span class="input-group-btn">
+          <button type="submit" class="btn btn-default">댓글쓰기</button>                
+        </span>
+      </div>
+    </form>
+
+		{% for comment in comments %}
+    <div class="media">
+      <div class="media-left">
+        <a href="{{url_for('user_info', user_id=comment.user.id)}}">
+					{% if article.user.photo == "" %}
+          	<img class="media-object img-circle" src="http://nstalk.xyz/download/default.png" alt="..."width="50px" height="50px">
+					{% else %}
+          	<img class="media-object img-circle" src="http://nstalk.xyz/download/{{comment.user.photo}}" alt="..."width="50px" height="50px">
+					{% endif %}
+        </a>
+      </div>
+      <div class="media-body">
+				<span class="text-primary">{{comment.user.name}} : </span>
+				{{comment.content}}
+				<button class="delete_comment close" data-href="{{url_for('delete_comment', article_id=article.id, comment_id=comment.id)}}"  style="margin:2%"  >&times;</button>
+      </div>
+    </div>
+		{% endfor %}
+
+		
+	<script>
+		$(function() {
+			$('#delete_article').click(function(){
+				$('.modal-title').text('게시글 삭제')
+				$('.modal-body').html('<h1>게시글을 <span style="color:red">삭제</span>합니다</h1>')
+				$('#delete_button').attr('href',"{{url_for('delete_article', article_id=article.id)}}")
+				$('#confirmModal').modal({backdrop:'static'})
+			})
+			$('.delete_comment').click(function(){
+				$('.modal-title').text('댓글 삭제')
+				$('.modal-body').html('<h1>댓글을 <span style="color:red">삭제</span>합니다</h1>')
+				$('#delete_button').attr('href',$(this).attr('data-href'))
+				$('#confirmModal').modal({backdrop:'static'})
+			})
+		});
+	</script>
+
+
+<!--Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-info">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="confirmModalLabel"></h4>
+      </div>
+      <div class="modal-body"> 
+      </div>
+      <div class="modal-footer bg-info">
+        <a id="delete_button" href="#" class="btn btn-danger" style="margin-right:2%" >삭제</a>
+        <button type="button" class="btn btn-warning" data-dismiss="modal">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

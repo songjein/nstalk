@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+	.media{
+		background:rgba(224,224,224,0.25); 
+		border-radius:7px;	
+	}
+	.jumbotron {
+		padding:2%; margin-bottom:2%;
+	}
+	.profile-text{
+		font-size: 0.7em;
+	}
+	
+	#profile {
+		font-size:2.5em;
+	}
+	#profile img {
+		width:30%;
+	}
+	@media screen and (max-width:480px){
+		#profile{font-size:1.2em;}
+	}
+</style>
+<div class="jumbotron" style="position:relative; margin-bottom:2%">
+	<div class="row" id="profile">
+		{% if g.user.photo == "" %}
+			<img  style="float:left; margin:0 5%;" class="img-rounded" src="http://nstalk.xyz/download/default.png">
+		{% else %}
+			<img  style="float:left; margin:0 5%;" class="img-rounded" src="http://nstalk.xyz/download/{{user.photo}}">
+		{% endif %}
+		<div class="profile-text">
+		<strong>학번 : </strong><span>{{user.id}}</span>
+		<br>
+		<strong>이름 : </strong><span>{{user.name}}</span>
+		<br>
+		<strong>게시글 수 : {{num_article}} 개</strong>
+		<br>
+		</div>
+		<br>
+		{%if g.user.id == user.id%}
+		<div class="row">
+		<div class="col-md-4 col-md-offset-8 col-xs-8 col-xs-offset-4">
+			<a href="{{url_for('logout')}}"  class="btn btn-sm btn-success">로그아웃</a>
+			<a href="{{url_for('update_profile')}}" type="button" class="btn btn-sm btn-default">개인정보수정</a>
+		</div>
+		</div>
+		{%endif%}
+	</div>
+</div>
+
+
+	{% for article in articles %}
+	<div class="media">
+		<div class="media-left media-top">
+			<a href="#">
+				{% if article.user.photo == "" %}
+					<img class="media-object img-circle" src="http://nstalk.xyz/download/default.png" width="50px" height="50px">
+				{% else %}
+					<img class="media-object img-circle" src="http://nstalk.xyz/download/{{article.user.photo}}" width="50px" height="50px">
+				{% endif %}
+			</a>
+		</div>
+		<div class="media-body">
+			<h4 class="media-heading">
+				<strong style="font-size:0.8em"class="text-info">#{{article.tag.id}}</strong> 
+				<a href="{{url_for('show_article', article_id=article.id)}}">
+					<strong class="text-success">{{article.title|truncate(15)}}</strong>
+				</a>
+				<br>
+				<a style="font-size:0.8em;" href="{{url_for('user_info', user_id=article.user.id)}}">
+					글쓴이: {{article.user.name}}
+				</a>
+				<br>
+				<span style="font-size:0.7em; color:gray"> 좋아요 {{article.like_count}} 개</span>,
+				<span style="font-size:0.7em; color:gray"> 댓글 {{article.comment_count}} 개</span>
+			</h4>
+			<a style="color:black" href="{{url_for('show_article', article_id=article.id)}}">
+				{{article.content | truncate(40)}}
+			</a>
+		</div>
+	</div>
+	{% endfor %}
+
+</div>
+
+{% endblock %}

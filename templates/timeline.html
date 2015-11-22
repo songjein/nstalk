@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+
+	<style>
+		.favtag{
+			font-size: 1.2em;	
+		}
+		.jumbotron {
+			padding:2%; margin-bottom:2%;
+		}
+		.media{
+			background:rgba(224,224,224,0.25); 
+			border-radius:7px;	
+		}
+		.notice{
+			background:rgba(255,0,0,0.15); 
+		}
+		.favtag{ white-space : nowrap;}
+	</style>
+	<script>
+		$(function(){
+			$("#tag_{{sort_type}}").css('background', '#FFF612');
+			// 공지사항의 경우 두개 색칠해주려고 ㅋ
+			if ("{{sort_type}}" == "공지사항")
+				$("#tag_notice").css('background', '#FFF612');
+				
+		})
+	</script>
+
+
+	{% if articles|length > 0 %}
+	<div class="jumbotron"> 
+		<strong><a id="tag_all" style="color:black" href="{{url_for('timeline', sort_type='all')}}" class="favtag" >#전체 보기</a></strong>,&nbsp;
+		<strong><a id="tag_classmate" style="color:black" href="{{url_for('timeline', sort_type='classmate')}}" class="favtag" >#반만 보기</a></strong>,&nbsp;
+		<strong><a id="tag_notice" style="color:black" href="{{url_for('timeline', sort_type='공지사항')}}" class="favtag" >#공지사항</a></strong>
+		</br>
+		<strong class="favtag">#인기태그 : </strong> 
+		{% for tag in tags %}
+			<a id="tag_{{tag.id}}"href="{{url_for('timeline', sort_type=tag.id)}}" class="favtag text-{{textcolor[loop.index0%6]}}" >
+			{{tag.id}}({{tag.article_count}}){% if loop.index0 + 1 < tags|length  %},{% endif %}
+			</a>
+		{% endfor %}
+	</div>
+	{% endif %}
+
+	{% for article in articles %}
+	<div class="media {% if article.user.id == "nstalk" %}notice{% endif %}">
+		<div class="media-left media-top">
+			<a href="{{url_for('user_info', user_id=article.user.id)}}">
+			{% if article.user.photo == "" %}
+				<img class="media-object img-circle" src="http://nstalk.xyz/download/default.png" width="50px" height="50px">
+			{% else %}
+				<img class="media-object img-circle" src="http://nstalk.xyz/download/{{article.user.photo}}" width="50px" height="50px">
+			{% endif %}
+			</a>
+		</div>
+		<div class="media-body">
+			<h4 class="media-heading">
+				<strong style="font-size:0.8em"class="text-info">#{{article.tag.id}}</strong> 
+				<a href="{{url_for('show_article', article_id=article.id)}}">
+					<strong class="text-success">{{article.title|truncate(15)}}</strong>
+				</a>
+				<br>
+				<a style="font-size:0.8em;" href="{{url_for('user_info', user_id=article.user.id)}}">
+					글쓴이: {{article.user.name}}
+				</a>
+				<br>
+				<span style="font-size:0.7em; color:gray"> 좋아요 {{article.like_count}} 개</span>
+				<span style="font-size:0.7em; color:gray"> 댓글 {{article.comment_count}} 개</span>
+			</h4>
+			<a style="color:black" href="{{url_for('show_article', article_id=article.id)}}">
+				{{article.content | truncate(40)}}
+			</a>
+		</div>
+	</div>
+	{% endfor %}
+
+{% endblock %}
